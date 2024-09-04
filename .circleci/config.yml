@@ -9,7 +9,8 @@ orbs:
 executors:
   node-executor:
     docker:
-      - image: cypress/browsers:node-18.20.3-chrome-125.0.6422.141-1-ff-126.0.1-edge-125.0.2535.85-1 # Use a Cypress image with the correct Node.js version
+      - image: docker pull cypress/browsers:node-18.20.3-chrome-125.0.6422.141-1-ff-126.0.1-edge-125.0.2535.85-1
+        # Use a Cypress image with the correct Node.js version
         environment:
           # Additional environment variables if needed
           TERM: xterm
