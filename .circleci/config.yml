@@ -11,28 +11,28 @@ executors:
           TERM: xterm
 
 jobs:
-  cypress-tests:
+  build:
     executor: node-executor
     steps:
-      - checkout # Check out your code
+      - checkout
       - run:
-          name: Install Dependencies
-          command: npm ci
+          name: Install dependencies
+          command: npm install
       - run:
-          name: Build the Project
+          name: Build the project
           command: npm run build
       - run:
-          name: Start the Server
+          name: Start the server
           command: npm run start &
       - run:
-          name: Wait for Server
-          command: npx wait-on http://localhost:3000
+          name: Wait for the server to be ready
+          command: npx wait-on --timeout 60000 http://localhost:3000
       - run:
-          name: Run Cypress Tests
+          name: Run Cypress tests
           command: npx cypress run
 
 workflows:
   version: 2
   build:
     jobs:
-      - cypress-tests
+      - build
