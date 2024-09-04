@@ -30,16 +30,29 @@ executors:
         environment:
           TERM: xterm
 
+jobs:
+  cypress-tests:
+    executor: node-executor
+    steps:
+      - checkout # Check out the source code
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - run:
+          name: Build the Project
+          command: npm run build
+      - run:
+          name: Start the Server
+          command: npm run start & # Start the server in the background
+      - run:
+          name: Wait for Server
+          command: npx wait-on http://localhost:3000 # Wait for the server to be up
+      - run:
+          name: Run Cypress Tests
+          command: npx cypress run # Run Cypress tests
+
 workflows:
+  version: 2
   build:
     jobs:
-      - cypress/run:
-          executor: node-executor
-          start-command: |
-            npm ci # Clean install dependencies
-            npm run build # Build the project
-            npm run start & # Start the server in the background
-            npx wait-on http://localhost:3000 # Wait for the server to be ready before running tests
-          wait-on: http://localhost:3000 # Ensure Cypress waits until the app is up
-          config: cypress.config.ts # Specify the Cypress configuration file if needed
-
+      - cypress-tests
