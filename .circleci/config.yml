@@ -14,6 +14,11 @@ executors:
         environment:
           # Additional environment variables if needed
           TERM: xterm
+    parameters:
+      node-version:
+        default: 18.18.0
+        description: The version of Node to run your tests with.
+        type: string
 
 workflows:
   build:
