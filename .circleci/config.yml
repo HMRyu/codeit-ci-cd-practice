@@ -1,21 +1,45 @@
+# version: 2.1
+# orbs:
+#   # "cypress-io/cypress@3" installs the latest published
+#   # version "s.x.y" of the orb. We recommend you then use
+#   # the strict explicit version "cypress-io/cypress@3.x.y"
+#   # to lock the version and prevent unexpected CI changes
+#   cypress: cypress-io/cypress@3
+
+# executors:
+#   node-executor:
+#     docker:
+#       - image: cypress/browsers:node-18.17.0-chrome-latest # Use a Cypress image with the correct Node.js version
+#         environment:
+#           # Additional environment variables if needed
+#           TERM: xterm
+
+# workflows:
+#   build:
+#     jobs:
+#       - cypress/run: # "run" job comes from "cypress" orb
+#           start-command: 'npm run start'
 version: 2.1
 orbs:
-  # "cypress-io/cypress@3" installs the latest published
-  # version "s.x.y" of the orb. We recommend you then use
-  # the strict explicit version "cypress-io/cypress@3.x.y"
-  # to lock the version and prevent unexpected CI changes
   cypress: cypress-io/cypress@3
 
 executors:
   node-executor:
     docker:
-      - image: cypress/browsers:node-18.17.0-chrome-latest # Use a Cypress image with the correct Node.js version
+      - image: cypress/browsers:node-18.18.0-chrome-latest # Use Node.js > 18.17.0 with Chrome
         environment:
-          # Additional environment variables if needed
           TERM: xterm
 
 workflows:
   build:
     jobs:
-      - cypress/run: # "run" job comes from "cypress" orb
-          start-command: 'npm run start'
+      - cypress/run:
+          executor: node-executor
+          start-command: |
+            npm ci # Clean install dependencies
+            npm run build # Build the project
+            npm run start & # Start the server in the background
+            npx wait-on http://localhost:3000 # Wait for the server to be ready before running tests
+          wait-on: http://localhost:3000 # Ensure Cypress waits until the app is up
+          config: cypress.config.ts # Specify the Cypress configuration file if needed
+
