@@ -1,58 +1,21 @@
-# version: 2.1
-# orbs:
-#   # "cypress-io/cypress@3" installs the latest published
-#   # version "s.x.y" of the orb. We recommend you then use
-#   # the strict explicit version "cypress-io/cypress@3.x.y"
-#   # to lock the version and prevent unexpected CI changes
-#   cypress: cypress-io/cypress@3
-
-# executors:
-#   node-executor:
-#     docker:
-#       - image: cypress/browsers:node-18.17.0-chrome-latest # Use a Cypress image with the correct Node.js version
-#         environment:
-#           # Additional environment variables if needed
-#           TERM: xterm
-
-# workflows:
-#   build:
-#     jobs:
-#       - cypress/run: # "run" job comes from "cypress" orb
-#           start-command: 'npm run start'
 version: 2.1
 orbs:
+  # "cypress-io/cypress@3" installs the latest published
+  # version "s.x.y" of the orb. We recommend you then use
+  # the strict explicit version "cypress-io/cypress@3.x.y"
+  # to lock the version and prevent unexpected CI changes
   cypress: cypress-io/cypress@3
 
 executors:
   node-executor:
     docker:
-      - image: cypress/browsers:node-18.18.0-chrome-latest # Use Node.js > 18.17.0 with Chrome
+      - image: cypress/browsers:node-18.18.0-chrome-latest # Use a Cypress image with the correct Node.js version
         environment:
+          # Additional environment variables if needed
           TERM: xterm
 
-jobs:
-  cypress-tests:
-    executor: node-executor
-    steps:
-      - checkout # Check out the source code
-      - run:
-          name: Install Dependencies
-          command: npm ci
-      - run:
-          name: Build the Project
-          command: npm run build
-      - run:
-          name: Start the Server
-          command: npm run start & # Start the server in the background
-      - run:
-          name: Wait for Server
-          command: npx wait-on http://localhost:3000 # Wait for the server to be up
-      - run:
-          name: Run Cypress Tests
-          command: npx cypress run # Run Cypress tests
-
 workflows:
-  version: 2
   build:
     jobs:
-      - cypress-tests
+      - cypress/run: # "run" job comes from "cypress" orb
+          start-command: 'npm run start'
